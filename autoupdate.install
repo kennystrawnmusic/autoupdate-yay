@@ -1,0 +1,17 @@
+post_install() {
+	if [ "$(stat -c %d:%i /)" != "$(stat -c %d:%i /proc/1/root/.)" ]; then
+		# can't use `--now` when running in a chroot
+		systemctl enable autoupdate.timer
+	else
+		systemctl enable --now autoupdate.timer
+	fi
+}
+
+pre_remove() {
+	if [ "$(stat -c %d:%i /)" != "$(stat -c %d:%i /proc/1/root/.)" ]; then
+		# can't use `--now` when running in a chroot
+		systemctl disable autoupdate.timer
+	else
+		systemctl disable --now autoupdate.timer
+	fi
+}
